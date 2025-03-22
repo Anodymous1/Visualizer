@@ -191,10 +191,15 @@ class App(CameraOrbitControls, ShaderRenderer):
             self.get_camera_projection(),
             self.get_camera_transform(),
         )
+
+        
+
         #draw elements
         self.plane.draw(self.pt_selected)
         self.square.draw(self.ui.dataset_active)
         self.trajectory.draw(self.ui.dataset_active)
+
+        
 
         if self.ui.show_axes:
             self.axes.draw()
@@ -209,6 +214,10 @@ class App(CameraOrbitControls, ShaderRenderer):
             specular_reflection=self.ui.specular_reflection,
         )
 
+        #Update self.pt_selected to None when the data set is no longer chosen to be displayed
+        if self.ui.pt_selected_send == None:
+            self.pt_selected = None
+
 
     def on_click(self, window):
         # get 3D click coordinates
@@ -218,14 +227,15 @@ class App(CameraOrbitControls, ShaderRenderer):
         self.x_pos = self.x / (self.scale/256)
         self.y_pos = self.y / (self.scale/256)
 
-        print(self.x_pos,self.y_pos)
         uncertainty = 5
         for i in range(len(test.data)):
+            #To see if the mouse position matches 
             if self.ui.dataset_active[i]:
                 for pt in range(len(test.data[i])):
                     if (test.data[i][pt][0] <= (self.x_pos + uncertainty)) and (test.data[i][pt][0] >= (self.x_pos - uncertainty)):
                         if (test.data[i][pt][1] <= (self.y_pos + uncertainty)) and (test.data[i][pt][1] >= (self.y_pos- uncertainty)):
                             self.pt_selected = test.data[i][pt]
+        
 
 
 

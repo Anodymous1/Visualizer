@@ -90,6 +90,7 @@ class ParameterInterface:
         self.show_axes = True
         self.latest = True
 
+        self.pt_selected_send = False
 
 
 
@@ -115,6 +116,7 @@ class ParameterInterface:
 
         _, self.latest = imgui.checkbox("Only show last data", self.latest)
 
+        #To update the list of dataset which is active
         if self.latest:
             self.dataset_active = []
             for i in range(len(test.data)):
@@ -124,13 +126,20 @@ class ParameterInterface:
 
     @ui_section("Point data")
     def point_data(self,pt_selected):
-
+        
         if pt_selected == None:
             imgui.text(f"No data point selected")
 
         else:
             for i in range(len(self.dataset_active)):
-                if self.dataset_active[i]:
+                #To prevent the selected point of previous data set which is no longer showing
+                if pt_selected in test.data[i] and not self.dataset_active[i]:
+                    self.pt_selected_send = None   #This thing tells app.py to change back the pt_selected 
+                    imgui.text(f"No data point selected")
+                    return 
+                
+                #To find the data of the point selected
+                elif self.dataset_active[i]:
                     for pt in test.data[i]:
                         if pt_selected == pt:
                             set_number = i + 1
